@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>이메일 인증 페이지</title>
+
+    <th:block th:replace="fragment/common :: commonStatic"></th:block>
+
+</head>
+<body>
+<th:block th:replace="fragment/header :: commonHeader"></th:block>
+
+<div class="uk-container">
+
+    <div class="uk-flex uk-flex-center">
+
+        <div class="uk-form-horizontal uk-margin-top">
+
+            <h2 class="uk-text-center">이메일 인증</h2>
+
+            <form action="/api/auth/email/send" id="accountForm" method="POST">
+
+                <input type="hidden" th:value="${uuid}">
+
+                <div class="uk-margin">
+                    <legend class="uk-legend">이메일</legend>
+                    <div class="uk-inline uk-width-1-1">
+                        <span class="uk-form-icon" uk-icon="icon: user"></span>
+                        <input class="uk-input" type="text" aria-label="Not clickable icon" id="accountName" name="accountName">
+                    </div>
+
+                </div>
+
+                <div class="uk-flex uk-flex-center">
+                    <button class="uk-button uk-button-primary" type="button" id="submitButton">인증번호 전송</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+<script>
+
+    document.getElementById("submitButton").addEventListener("click", function (event){
+
+        let formData = new FormData(document.getElementById("accountForm"));
+        
+        let data = JSON.stringify(Object.fromEntries(formData))
+
+        console.log(data)
+        
+        $.ajax({
+            url: '/api/account',
+            type: "POST",
+            data: data,
+            dataType: "json",
+            contentType:'application/json'
+        })
+        .done(function(response) {
+
+            if (response.result){
+                let selectorList = document.getElementById("accountForm").querySelectorAll("input:not([class='uk-radio'])");
+                selectorList.forEach(function (selector) {
+                    selector.classList.remove('uk-form-danger')
+                })
+                let accountRole = document.getElementById("accountRole");
+                accountRole.innerText = ""
+
+                console.log(response)
+                response.data.contents.forEach(function (content) {
+
+                    let element = document.getElementById(content.field);
+
+                    if (element.tagName !== 'INPUT'){
+                        element.innerText = content.defaultMessage
+                    } else {
+                        element.classList.add('uk-form-danger')
+                        element.value = ""
+                        element.placeholder = content.defaultMessage
+                    }
+
+                })
+            }
+
+        }) 
+        .fail(function(error) { 
+            alert("가입에 실패하였습니다.")
+        })
+        .always(function() {
+        
+        });
+    })
+
+</script>
+
+</html>
