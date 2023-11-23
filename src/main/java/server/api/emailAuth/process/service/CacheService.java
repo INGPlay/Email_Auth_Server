@@ -69,6 +69,7 @@ public class CacheService {
     public boolean compareAuthCode(String uuid, String inputCode){
         final String KEY = getKey(uuid);
         String authCode = hashOperations.get(KEY, "authCode").toString();
+        hashOperations.delete(KEY, "authCode");
 
         log.info("authCode : {}", authCode);
         log.info("inputCode : {}", inputCode);

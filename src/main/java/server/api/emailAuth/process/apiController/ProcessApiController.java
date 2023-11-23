@@ -105,7 +105,7 @@ public class ProcessApiController {
             log.info("[succcess]");
             cacheService.deleteKey(compareAuthDTO.getUuid());
             redirectAttributes.addAttribute("result", result);
-            return "redirect:" + request.getRedirectUrl();
+            return "redirect:" + request.getSuccessRedirectUrl();
         } else {
             log.info("[fail]");
             cacheService.countRepeat(compareAuthDTO.getUuid());
