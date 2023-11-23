@@ -1,4 +1,4 @@
-package server.api.emailAuth.common.subType;
+package server.api.emailAuth.common.domain.subType;
 
 import lombok.AllArgsConstructor;
 

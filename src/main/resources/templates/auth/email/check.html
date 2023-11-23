@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>인증 페이지</title>
+
+    <th:block th:replace="fragment/common :: commonStatic"></th:block>
+
+</head>
+<body>
+<th:block th:replace="fragment/header :: commonHeader"></th:block>
+
+<div class="uk-container">
+
+    <div class="uk-flex uk-flex-center">
+
+        <div class="uk-form-horizontal uk-margin-top">
+
+            <div id="countDown" class="uk-grid-small uk-child-width-auto uk-margin" uk-grid uk-countdown>
+                <div>
+                    <div class="uk-countdown-number uk-countdown-minutes"></div>
+                </div>
+                <div class="uk-countdown-separator">:</div>
+                <div>
+                    <div class="uk-countdown-number uk-countdown-seconds"></div>
+                </div>
+            </div>
+
+            <h2 class="uk-text-center">인증 코드 입력</h2>
+
+            <form action="/api/auth/email/compare" id="accountForm" method="POST">
+
+                <input type="hidden" name="uuid" th:value="${uuid}">
+
+                <div class="uk-margin">
+                    <legend class="uk-legend">인증 코드</legend>
+                    <div class="uk-inline uk-width-1-1">
+                        <span class="uk-form-icon" uk-icon="icon: user"></span>
+                        <input class="uk-input" type="text" aria-label="Not clickable icon" id="inputCode" name="inputCode">
+                    </div>
+
+                </div>
+
+                <div class="uk-flex uk-flex-center">
+                    <button class="uk-button uk-button-primary" type="submit" id="submitButton">인증코드 확인</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+<script th:inline="javascript">
+    let count = [[${countDown}]];
+
+    UIkit.countdown(document.getElementById('countDown'), {
+        date: count
+    });
+</script>
+
+</html>

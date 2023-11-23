@@ -1,6 +1,6 @@
 package server.api.emailAuth.account.domain.subType;
 
-import server.api.emailAuth.common.subType.EnumBase;
+import server.api.emailAuth.common.domain.subType.EnumBase;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -5,12 +5,17 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Getter @Setter
 public class RequestAuthDTO {
 
     @URL
-    @NotNull
+    @NotEmpty
     private String redirectUrl;
+
+    @URL
+    @NotEmpty
+    private String failRedirectUrl;
 }

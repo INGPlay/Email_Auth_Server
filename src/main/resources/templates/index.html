@@ -20,7 +20,8 @@
     <div class="uk-flex uk-flex-center uk-margin-top">
         <form action="/api/auth/email/request" method="POST">
 
-            <input type="text" name="redirectUrl">
+            <input type="text" name="redirectUrl" placeholder="redirectUrl">
+            <input type="text" name="failRedirectUrl" placeholder="failRedirectUrl">
             <input type="submit" class="uk-button-default">
 
         </form>
