@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import server.api.emailAuth.exceptionHandler.exception.WrongCodeRepeatExcepton;
+import server.api.emailAuth.process.domain.dto.CheckAuthDTO;
 import server.api.emailAuth.process.domain.dto.EditAuthProcessDTO;
 import server.api.emailAuth.process.domain.dto.RequestAuthDTO;
 
@@ -37,11 +38,14 @@ public class CacheService {
         expireForEmailInput(KEY);
     }
 
-    public void addCheckProcess(String uuid, String authCode){
+    public void addAuthorizeProcess(String uuid, CheckAuthDTO checkAuthDTO) throws JsonProcessingException {
 
         final String KEY = getKey(uuid);
 
-        hashOperations.put(KEY, "authCode", authCode);
+        hashOperations.put(KEY,
+                "authorize",
+                objectMapper.writeValueAsString(checkAuthDTO)
+        );
 
         expireForAuthCode(KEY);
     }
@@ -66,23 +70,20 @@ public class CacheService {
         return (String) hashOperations.get(KEY, "count");
     }
 
-    public boolean compareAuthCode(String uuid, String inputCode){
-        final String KEY = getKey(uuid);
-        String authCode = hashOperations.get(KEY, "authCode").toString();
-        hashOperations.delete(KEY, "authCode");
-
-        log.info("authCode : {}", authCode);
-        log.info("inputCode : {}", inputCode);
-        if (authCode.equals(inputCode)){
-            return true;
-        }
-
-        return false;
-    }
-
     public RequestAuthDTO getRequest(String uuid) throws JsonProcessingException {
         final String KEY = getKey(uuid);
-        return objectMapper.readValue((String) hashOperations.get(KEY, "request"), RequestAuthDTO.class);
+        return objectMapper.readValue(
+                (String) hashOperations.get(KEY, "request"),
+                RequestAuthDTO.class
+        );
+    }
+
+    public CheckAuthDTO getAuthorize(String uuid) throws JsonProcessingException {
+        final String KEY = getKey(uuid);
+        return objectMapper.readValue(
+                (String) hashOperations.get(KEY, "authorize"),
+                CheckAuthDTO.class
+        );
     }
 
     public boolean isExistKey(String uuid){

@@ -1,7 +1,6 @@
 package server.api.emailAuth.process.apiController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.StreamWriteCapability;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -13,10 +12,7 @@ import server.api.emailAuth.common.util.ResponseUtil;
 import server.api.emailAuth.exceptionHandler.exception.CacheTimeoutException;
 import server.api.emailAuth.exceptionHandler.exception.EmailDuplicateException;
 import server.api.emailAuth.exceptionHandler.exception.FailedValidationException;
-import server.api.emailAuth.process.domain.dto.CompareAuthDTO;
-import server.api.emailAuth.process.domain.dto.EditAuthProcessDTO;
-import server.api.emailAuth.process.domain.dto.RequestAuthDTO;
-import server.api.emailAuth.process.domain.dto.SendAuthDTO;
+import server.api.emailAuth.process.domain.dto.*;
 import server.api.emailAuth.process.service.CacheService;
 import server.api.emailAuth.process.service.CheckService;
 import server.api.emailAuth.process.service.EmailService;
@@ -88,7 +84,11 @@ public class ProcessApiController {
                 "인증코드입니다.",
                 "인증번호 : " + authCode
         );
-        cacheService.addCheckProcess(sendAuthDTO.getUuid(), authCode);
+
+        CheckAuthDTO checkAuthDTO = new CheckAuthDTO();
+        checkAuthDTO.setEmail(sendAuthDTO.getEmail());
+        checkAuthDTO.setAuthCode(authCode);
+        cacheService.addAuthorizeProcess(sendAuthDTO.getUuid(), checkAuthDTO);
 
         return "redirect:/api/auth/email/check/" + sendAuthDTO.getUuid();
     }
@@ -110,19 +110,26 @@ public class ProcessApiController {
     @PostMapping("/compare")
     public String compareCode(@ModelAttribute CompareAuthDTO compareAuthDTO,
                               RedirectAttributes redirectAttributes) throws JsonProcessingException {
-        boolean result = cacheService.compareAuthCode(compareAuthDTO.getUuid(), compareAuthDTO.getInputCode());
 
+        CheckAuthDTO authorize = cacheService.getAuthorize(compareAuthDTO.getUuid());
         RequestAuthDTO request = cacheService.getRequest(compareAuthDTO.getUuid());
+        cacheService.deleteKey(compareAuthDTO.getUuid());
 
+        boolean result = isEqaulCode(authorize.getAuthCode(), compareAuthDTO.getInputCode());
         if (result){
             log.info("[succcess]");
             cacheService.deleteKey(compareAuthDTO.getUuid());
-            redirectAttributes.addAttribute("result", result);
+            redirectAttributes.addAttribute("result", true);
+            redirectAttributes.addAttribute("authorizeEmail", authorize.getEmail());
             return "redirect:" + request.getSuccessRedirectUrl();
         } else {
             log.info("[fail]");
             cacheService.countRepeat(compareAuthDTO.getUuid());
             return "redirect:/api/auth/email/input/" + compareAuthDTO.getUuid();
         }
+    }
+
+    private static boolean isEqaulCode(String authCode, String inputCode) {
+        return authCode.equals(inputCode);
     }
 }
