@@ -67,6 +67,8 @@ jobs:
                   key: ${{ secrets.CLOUD_KEY }}
                   port: 22
                   script: |
+                      sudo iptables -I INPUT -p tcp --dport 8080 -j ACCEPT
+                      sudo iptables -t nat -A PREROUTING -p tcp --dport 8080 -j REDIRECT --to-port 8080
                       sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
                       sudo docker stop $(sudo docker ps -a -q) 
                       sudo docker rm $(sudo docker ps -a -q) 
