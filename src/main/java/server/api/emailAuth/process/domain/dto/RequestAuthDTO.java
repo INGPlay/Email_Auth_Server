@@ -16,4 +16,7 @@ public class RequestAuthDTO {
     @URL
     @NotEmpty
     private String failRedirectUrl;
+
+    @URL
+    private String duplicateCheckerUrl;
 }

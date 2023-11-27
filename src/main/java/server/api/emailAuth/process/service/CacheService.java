@@ -113,7 +113,7 @@ public class CacheService {
         redisTemplate.expire(KEY, 5, TimeUnit.MINUTES);
     }
 
-    public String getKey(String uuid) {
+    private String getKey(String uuid) {
         return EMAIL_AUTH_PATH + uuid;
     }
 }

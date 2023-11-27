@@ -21,7 +21,7 @@ public class CustomExceptionHandler {
                                HttpServletRequest httpServletRequest,
                                RedirectAttributes redirectAttributes){
         redirectAttributes.addFlashAttribute("referer", getReferer(httpServletRequest));
-        redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
+        redirectAttributes.addFlashAttribute("errorMessage", "알 수 없는 에러입니다.");
         return "redirect:/error";
     }
 

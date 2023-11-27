@@ -17,8 +17,8 @@ public class AccountController {
         return "account/login";
     }
 
-    @GetMapping("/register")
-    public String registerPage(){
-        return "account/register";
-    }
+//    @GetMapping("/register")
+//    public String registerPage(){
+//        return "account/register";
+//    }
 }

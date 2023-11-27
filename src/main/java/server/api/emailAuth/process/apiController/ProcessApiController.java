@@ -1,6 +1,7 @@
 package server.api.emailAuth.process.apiController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.StreamWriteCapability;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -10,12 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import server.api.emailAuth.common.util.ResponseUtil;
 import server.api.emailAuth.exceptionHandler.exception.CacheTimeoutException;
+import server.api.emailAuth.exceptionHandler.exception.EmailDuplicateException;
 import server.api.emailAuth.exceptionHandler.exception.FailedValidationException;
 import server.api.emailAuth.process.domain.dto.CompareAuthDTO;
 import server.api.emailAuth.process.domain.dto.EditAuthProcessDTO;
 import server.api.emailAuth.process.domain.dto.RequestAuthDTO;
 import server.api.emailAuth.process.domain.dto.SendAuthDTO;
 import server.api.emailAuth.process.service.CacheService;
+import server.api.emailAuth.process.service.CheckService;
 import server.api.emailAuth.process.service.EmailService;
 import server.api.emailAuth.process.service.util.CodeGenerator;
 
@@ -35,6 +38,7 @@ public class ProcessApiController {
     private final CodeGenerator codeGenerator;
     private final EmailService emailService;
     private final CacheService cacheService;
+    private final CheckService checkService;
 
     @PostMapping("/request")
     public String requestAuthentication(@ModelAttribute @Valid RequestAuthDTO requestAuthDTO,
@@ -64,9 +68,18 @@ public class ProcessApiController {
     }
 
     @GetMapping("/send")
-    public String sendCode(@ModelAttribute SendAuthDTO sendAuthDTO) throws NoSuchAlgorithmException {
+    public String sendCode(@ModelAttribute SendAuthDTO sendAuthDTO) throws NoSuchAlgorithmException, JsonProcessingException {
+
         if (!cacheService.isExistKey(sendAuthDTO.getUuid())){
             throw new CacheTimeoutException();
+        }
+
+        RequestAuthDTO request = cacheService.getRequest(sendAuthDTO.getUuid());
+
+        if (request.getDuplicateCheckerUrl() != null && !request.getDuplicateCheckerUrl().trim().isEmpty()) {
+            if (checkService.isFindEmail(request.getDuplicateCheckerUrl(), sendAuthDTO.getEmail())){
+                throw new EmailDuplicateException();
+            }
         }
 
         String authCode = codeGenerator.getRandomNumberCode(6);

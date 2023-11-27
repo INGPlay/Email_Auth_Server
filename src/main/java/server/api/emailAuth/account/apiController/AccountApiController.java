@@ -1,5 +1,7 @@
 package server.api.emailAuth.account.apiController;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import server.api.emailAuth.account.domain.RegisterAccountDTO;
 import server.api.emailAuth.account.repository.AccountRepository;
 import server.api.emailAuth.account.service.AccountService;
@@ -11,10 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -28,7 +26,7 @@ public class AccountApiController {
 
     private final ResponseUtil responseUtil;
     private final AccountService accountService;
-
+    
     @PostMapping
     public ResponseEntity<ResponseForm> registerAccount(@RequestBody @Valid RegisterAccountDTO registerAccountDTO,
                                                         BindingResult bindingResult){
@@ -40,6 +38,11 @@ public class AccountApiController {
         ResponseForm responseForm = new ResponseForm(true);
 
         return new ResponseEntity<>(responseForm, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseForm> checkFindEmail(@RequestParam String email){
+        return responseUtil.makeResponseEntity(null, accountService.isInDb(email));
     }
 
     private boolean isNotValidateForRegister(RegisterAccountDTO registerAccountDTO, BindingResult bindingResult) {
