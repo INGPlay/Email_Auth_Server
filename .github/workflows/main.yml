@@ -17,16 +17,9 @@ jobs:
         steps:
             - uses: actions/checkout@v3
 
-            - run: pwd
             - run: echo "${{ secrets.APPLICATION_YML }}" > $RESOURCES_PATH/application.yml
-            - run: echo "${{ secrets.APPLICATION_DATABASE_PROD }}" > $RESOURCES_PATH/application-databaseProd.yml
-            - run: echo "${{ secrets.APPLICATION_EXTERNAL_PROD }}" > $RESOURCES_PATH/application-externalProd.yml
-            - run: echo '${{ secrets.APPLICATION_OAUTH2 }}' > $RESOURCES_PATH/application-oauth2.yml
-            - run: echo "${{ secrets.APPLICATION_REDIS_PROD }}" > $RESOURCES_PATH/application-redisProd.yml
-            - run: echo "${{ secrets.APPLICATION_THYMELEAF }}" > $RESOURCES_PATH/application-thymeleaf.yml
-            - run: echo "${{ secrets.APPLICATION_SERVER }}" > $RESOURCES_PATH/application-server.yml
-            - run: echo "${{ secrets.OCI_API_KEY }}" > $RESOURCES_PATH/oci_api_key.pem
-            - run: echo "${{ secrets.OCI_CONFIG_PROD }}" > $RESOURCES_PATH/oci_config_prod
+            - run: echo "${{ secrets.APPLICATION_PROD }}" > $RESOURCES_PATH/application-prod.yml
+            - run: echo "${{ secrets.APPLICATION_SMTP }}" > $RESOURCES_PATH/application-smtpGoogle.yml
 
 
             - name: Set up JDK 11
