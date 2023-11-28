@@ -20,9 +20,9 @@
     <div class="uk-flex uk-flex-center uk-margin-top" sec:authorize="hasRole('MANAGER')">
         <form action="/api/auth/email/request" method="POST">
 
-            <input type="text" name="successRedirectUrl" value="http://localhost:8080?result=true" placeholder="successRedirectUrl">
-            <input type="text" name="failRedirectUrl" value="http://localhost:8080?result=false" placeholder="failRedirectUrl">
-            <input type="text" name="duplicateCheckerUrl" value="http://localhost:8080/api/account" placeholder="duplicateCheckerUrl">
+            <input type="text" name="successRedirectUrl" th:value="${uri}" placeholder="successRedirectUrl">
+            <input type="text" name="failRedirectUrl" th:value="${uri}" placeholder="failRedirectUrl">
+            <input type="text" name="duplicateCheckerUrl" th:value="|${uri}api/account|" placeholder="duplicateCheckerUrl">
             <input type="submit" class="uk-button-default">
 
         </form>

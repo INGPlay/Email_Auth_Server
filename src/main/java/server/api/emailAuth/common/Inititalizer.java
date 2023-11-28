@@ -18,12 +18,12 @@ public class Inititalizer implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
 
-        if (isInAccountName("admin")) {
+        if (isInAccountName("manager")) {
             RegisterAccountDTO managerDTO = new RegisterAccountDTO();
             managerDTO.setAccountRole(RoleEnum.MANAGER);
-            managerDTO.setAccountName("admin");
-            managerDTO.setAccountPassword("admin");
-            managerDTO.setAccountDisplayName("ADMIN");
+            managerDTO.setAccountName("manager");
+            managerDTO.setAccountPassword("manager");
+            managerDTO.setAccountDisplayName("MANAGER");
             accountService.insertLocalAccount(managerDTO);
         }
     }
